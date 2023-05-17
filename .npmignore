@@ -1,0 +1,7 @@
+src/
+.idea/
+build/
+.gitignore
+.npmignore
+pnpm-lock.yaml
+tsconfig.json

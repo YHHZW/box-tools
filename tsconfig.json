@@ -1,0 +1,18 @@
+{
+  "include": ["./src/components/**/*.ts", "./src/components/**/*.tsx"],
+  "compilerOptions": {
+    "target": "es6",
+    "module": "es6",
+    "moduleResolution": "node",
+
+    "declaration": true,
+    "outDir": "./es",
+    "esModuleInterop": true,
+
+    "strict": true,
+    "skipLibCheck": true,
+    "jsx": "react",
+    "jsxFactory": "React.createElement",
+    "allowJs": true
+  }
+}
