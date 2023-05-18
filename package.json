@@ -1,6 +1,6 @@
 {
   "name": "box-tools",
-  "version": "0.0.4",
+  "version": "1.0.0",
   "description": "React component",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -8,7 +8,7 @@
   "scripts": {
     "test": "webpack-dev-server --config build/webpack.test.js",
     "build": "webpack --config build/webpack.prod.js --progress",
-    "build-test": "tsc"
+    "build-test": "tsc && tsc -p build/tsconfig.es.json"
   },
   "repository": {
     "type": "git",

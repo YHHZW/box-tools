@@ -1,16 +1,21 @@
-import React, { ChangeEvent, useLayoutEffect } from "react"
+import React, {useCallback, useLayoutEffect} from "react"
 import {useFieldContent} from "./context/FieldContext"
-import type { NamePath, Rule } from "./types/interface"
+import type {EventArgs, NamePath, Rule, StoreValue} from "./types/interface"
+import {Store} from "./types/interface";
+import {defaultGetValueFromEvent} from "./utils/valueUtil";
 
-
-type FiledProps = {
+interface FiledProps {
     children: React.ReactElement
     name: NamePath
-    rules: Rule[]
+    rules?: Rule[]
+    trigger?: string
+    valuePropName?: string
+    getValueProps?: (value: StoreValue) => Record<string, unknown>
+    getValueFromEvent?: (...args: EventArgs) => StoreValue
 }
 
 const Field: React.FC<FiledProps> = (props) => {
-    const { children, name } = props;
+    const { children, name, trigger = 'onChange', valuePropName = 'value', getValueProps, getValueFromEvent } = props;
     const { getFieldValue, setFieldsValue, registerFieldEntities } = useFieldContent()
 
     const [, forceUpdate] = React.useReducer((x) => x + 1, 0)
@@ -25,16 +30,29 @@ const Field: React.FC<FiledProps> = (props) => {
         return unregister;
     }, [])
 
-    const getControlled = () => {
-        return {
-            value: (getFieldValue && getFieldValue(name)) || "",
-            onChange: (e: ChangeEvent<HTMLInputElement>) => {
-                const newValue = e?.target?.value;
-                setFieldsValue && setFieldsValue({ [name]: newValue });
-            },
+    const getControlled = useCallback((childProps: Store = {}) => {
+        const mergedGetValueProps = getValueProps || ((val: StoreValue) => ({ [valuePropName]: val }))
+        const value: StoreValue = (getFieldValue && getFieldValue(name)) || undefined
+
+        const control = {
+            ...childProps,
+            ...mergedGetValueProps(value)
         }
-    }
-    return React.cloneElement(children, getControlled())
+
+        control[trigger] = (...args: EventArgs) => {
+            let newValue: StoreValue
+            if (getValueFromEvent) {
+                newValue = getValueFromEvent(...args)
+            } else {
+                newValue = defaultGetValueFromEvent(valuePropName, ...args)
+            }
+            setFieldsValue && setFieldsValue({ [name]: newValue })
+        }
+
+        return control
+    }, [name])
+
+    return React.cloneElement(children, getControlled(children.props))
 };
 
 export default Field

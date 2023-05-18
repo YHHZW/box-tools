@@ -2,6 +2,7 @@ import type {Callbacks, FieldEntity, FormInstance, NamePath, Store} from "../typ
 
 export default class FormFactory {
     private store: Store = {}
+    private initialValues: Store = {}
     private callbacks: Callbacks = {}
     private fieldEntities: FieldEntity[] = [];
 
@@ -46,6 +47,28 @@ export default class FormFactory {
         this.callbacks = { ...this.callbacks, ...callbacks };
     }
 
+    private setInitialValues = (initialValues: Store, init: boolean) => {
+        this.initialValues = initialValues
+        if (init) {
+            this.store = { ...initialValues }
+        }
+    }
+
+    private resetFields = (nameList?: NamePath[]) => {
+
+        if (!nameList) {
+            this.store = {...this.initialValues}
+            this.notifyObservers()
+        }
+
+    }
+
+    private notifyObservers = () => {
+        this.fieldEntities.forEach((entity) => {
+            entity.onStoreChange()
+        })
+    }
+
     // 订阅与取消订阅
     registerFieldEntities = (entity: FieldEntity) => {
         this.fieldEntities.push(entity);
@@ -73,6 +96,8 @@ export default class FormFactory {
             setFieldsValue: this.setFieldsValue,
             submit: this.submit,
             setCallbacks: this.setCallbacks,
+            setInitialValues: this.setInitialValues,
+            resetFields: this.resetFields,
             registerFieldEntities: this.registerFieldEntities,
         };
     }

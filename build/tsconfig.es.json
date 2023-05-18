@@ -1,12 +1,12 @@
 {
-  "include": ["./src/components/**/*.ts", "./src/components/**/*.tsx"],
+  "include": ["../src/components/**/*.ts", "../src/components/**/*.tsx"],
   "compilerOptions": {
     "target": "es6",
-    "module": "commonjs",
+    "module": "es6",
     "moduleResolution": "node",
 
     "declaration": true,
-    "outDir": "./lib",
+    "outDir": "../es",
     "esModuleInterop": true,
 
     "strict": true,
