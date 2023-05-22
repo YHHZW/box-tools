@@ -16,7 +16,7 @@ const Form: React.FC<FormProps> = (props) => {
     formInstance.setCallbacks({ onFinish, onFinishFailed })
 
     const mountRef = useRef<boolean | null>(null)
-    formInstance.setInitialValues(initialValues, true)
+    formInstance.setInitialValues(initialValues, !mountRef.current)
     if (!mountRef.current) {
         mountRef.current = true
     }
